@@ -1,0 +1,50 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Sistemas";
+    Layout = "~/_Layout.cshtml";
+
+    //var bd = Database.Open("conn");
+    //var Sistemas = bd.Query(@"SELECT dbo.Sistemas.id, dbo.Sistemas.nombre, dbo.Estados.nombre AS nomEstado, dbo.Unidades.nombre AS nomUnidad
+    //            FROM        dbo.Sistemas INNER JOIN
+    //                        dbo.Estados ON dbo.Sistemas.idEstado = dbo.Estados.id INNER JOIN
+    //                        dbo.Unidades ON dbo.Sistemas.idUnidad = dbo.Unidades.id AND dbo.Sistemas.idUnidad = dbo.Unidades.id AND dbo.Estados.id = dbo.Unidades.idEstado
+    //            ORDER BY dbo.Sistemas.nombre");
+
+    wsServicio.Service1 obj = new wsServicio.Service1();
+    var datos = JsonConvert.DeserializeObject<List<dynamic>>(obj.getSistemas("0"));
+
+}
+<br />
+<div class="contenedor">
+    <br />
+    <h3>Mantenimiento de Sistemas</h3>
+    <br />
+    <button type="button" id="btnNuevo" class="btn btn-primary">Nuevo</button>
+    <button type="button" id="btnEditar" class="btn btn-default" disabled>Editar</button>
+    <button type="button" id="btnEliminar" class="btn btn-default" disabled>Eliminar</button><br /><br />
+    <div class="table-responsive">
+        <table id="Sistemas" class="table" cellspacing="0" width="100">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Unidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in datos)
+                {
+                    <tr>
+                        <td>@row.id</td>
+                        <td>@row.nombre</td>
+                        <td>@row.Estado</td>
+                        <td>@row.Unidad</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="~/Mantenimientos/Sistemas/FuncionesSistemas.js"></script>

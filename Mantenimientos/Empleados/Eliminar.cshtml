@@ -1,0 +1,21 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    //var bd = Database.Open("conn");
+    //int id = Request.QueryString["id"].AsInt();
+
+    //var query = @"delete [dbo].[Empleados] where id = @0";
+    //var row = bd.QuerySingle(query, id);
+
+    //Response.Redirect("/Mantenimientos/Empleados/Empleados.cshtml");
+
+    string id = Request.QueryString["id"];
+
+    wsServicio.Service1 obj = new wsServicio.Service1();
+    var datos = JsonConvert.DeserializeObject<List<dynamic>>(obj.EliminarEmpleado(id));
+
+    Response.Redirect("/Mantenimientos/Empleados/Empleados.cshtml");
+
+}
+
+}

@@ -1,0 +1,46 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Unidades";
+    Layout = "~/_Layout.cshtml";
+
+    //var bd = Database.Open("conn");
+    //var Empleados = bd.Query(@"SELECT u.id, u.nombre, e.nombre as nomEstado, d.nombre as nomDepartamento FROM Unidades u, Estados e, Departamentos d where e.id = u.idEstado AND d.id = u.idDepartamento  order by u.id");
+
+    wsServicio.Service1 obj = new wsServicio.Service1();
+    var datos = JsonConvert.DeserializeObject<List<dynamic>>(obj.getUnidades("0"));
+
+}
+<br />
+<div class="contenedor">
+    <br />
+    <h3>Unidades del Sistema</h3>
+    <br />
+    <button type="button" id="btnNuevo" class="btn btn-primary">Nuevo</button>
+    <button type="button" id="btnEditar" class="btn btn-default" disabled>Editar</button>
+    <button type="button" id="btnEliminar" class="btn btn-default" disabled>Eliminar</button><br /><br />
+    <div class="table-responsive">
+        <table id="registros" class="table" cellspacing="0" width="100">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Departamento</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in datos)
+                {
+                    <tr>
+                        <td>@row.id</td>
+                        <td>@row.nombre</td>
+                        <td>@row.Estado</td>
+                        <td>@row.Departamento</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="~/Mantenimientos/Unidades/FuncionesUnidades.js"></script>

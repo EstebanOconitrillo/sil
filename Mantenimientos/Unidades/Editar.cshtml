@@ -1,0 +1,91 @@
+﻿@{
+    Page.Title = "Editar Unidades";
+    Layout = "~/_Layout.cshtml";
+
+    var bd = Database.Open("conn");
+
+    var lstEstados = bd.Query("SELECT [id], [nombre] FROM [sil].[dbo].[Estados]");
+    var lstDepartamentos = bd.Query("SELECT [id], [nombre] FROM [sil].[dbo].[Departamentos]");
+
+    int id = Request.QueryString["id"].AsInt();
+
+    var datos = bd.QuerySingle(@"SELECT [id],[nombre], [idEstado], [idDepartamento]
+                    FROM [dbo].[Unidades] where id = @0", id);
+
+    if (IsPost)
+    {
+        string nombre = Request.Form["nombre"];
+        int idEstado = Request.Form["idEstado"].AsInt();
+        int idDepartamento = Request.Form["idDepartamento"].AsInt();
+
+        var query = @"update [dbo].[Unidades] set [nombre] = @0, idEstado = @1, idDepartamento = @2
+           where id = @3";
+
+        var row = bd.QuerySingle(query, nombre, idEstado, idDepartamento, id);
+
+        Response.Redirect("/Mantenimientos/Unidades/Unidades.cshtml");
+    }
+}
+<div class="container">
+    <form method="post" style="margin-top: 30px;">
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <h3>Editar Unidades</h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Fecha">Nombre</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="nombre" name="nombre" aria-describedby="nombre" value="@datos.nombre" placeholder="Nombre de Empleado" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idUnidades">Estado</label>
+            <div class="col-sm-5">
+                <select id="idunidad" name="idEstado" class="selectpicker form-control">
+                    @foreach (var row in lstEstados)
+                    {
+                        if (row.id == datos.idEstado)
+                        {
+                            <option value="@row.id" selected>@row.nombre</option>
+                        }
+                        else
+                        {
+                            <option value="@row.id">@row.nombre</option>
+                        }
+
+                    }
+                </select>
+            </div>
+        </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="idDepartamento1">Departamento</label>
+                <div class="col-sm-5">
+                    <select id="idrol" name="idDepartamento" class="selectpicker form-control">
+                        @foreach (var row in lstDepartamentos)
+                        {
+                            if (row.id == datos.idDepartamento)
+                            {
+                                <option value="@row.id" selected>@row.nombre</option>
+                            }
+                            else
+                            {
+                                <option value="@row.id">@row.nombre</option>
+                            }
+
+                        }
+                    </select>
+                </div>
+            </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <a href="~/Mantenimientos/Unidades/Unidades.cshtml" class="btn btn-link" role="button">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>

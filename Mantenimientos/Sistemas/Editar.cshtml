@@ -1,0 +1,117 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Editar Sistemas";
+    Layout = "~/_Layout.cshtml";
+
+    //var bd = Database.Open("conn");
+
+    //var lstEstados = bd.Query("SELECT [id], [nombre] FROM [sil].[dbo].[Estados]");
+    //var lstUnidades = bd.Query("SELECT [id], [nombre] FROM [sil].[dbo].[Unidades]");
+
+    //int id = Request.QueryString["id"].AsInt();
+
+    //var datos = bd.QuerySingle(@"SELECT [id],[nombre], [idEstado], [idUnidad]
+    //        FROM [dbo].[Sistemas] where id = @0", id);
+
+    string msgError = "";
+    wsServicio.Service1 obj = new wsServicio.Service1();
+
+    var lstEstados = JsonConvert.DeserializeObject<List<dynamic>>(obj.getEstados("0"));
+    var lstUnidades = JsonConvert.DeserializeObject<List<dynamic>>(obj.getUnidades("0"));
+
+    var bd = Database.Open("conn");
+
+    string id = Request.QueryString["id"];
+
+    var datos = JsonConvert.DeserializeObject<List<dynamic>>(obj.getSistemas(id));
+
+    if (IsPost)
+    {
+        string nombre = Request.Form["nombre"];
+        string idEstado = Request.Form["idEstado"];
+        string idUnidad = Request.Form["idUnidad"];
+
+        //     var query = @"update [dbo].[Sistemas] set [nombre] = @0, idEstado = @1, idUnidad = @2
+        //where id = @3";
+
+        //     var row = bd.QuerySingle(query, nombre, idEstado, idUnidad, id);
+
+        //     Response.Redirect("/Mantenimientos/Sistemas/Sistemas.cshtml");
+
+        var result = JsonConvert.DeserializeObject<List<dynamic>>(obj.EditarSistema(id, nombre, idEstado, idUnidad));
+
+        if (result[0].ToString().Equals("Exito: Sistema modificado"))
+        {
+            msgError = "";
+            Response.Redirect("/Mantenimientos/Sistemas/Sistemas.cshtml");
+        }
+        else
+        {
+            msgError = "Error al modificar Sistema: " + result[0].ToString();
+        }
+    }
+}
+<div class="container">
+    <form method="post" style="margin-top: 30px;">
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <h3>Editar Sistemas</h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Nombre1">Nombre</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="nombre" name="nombre" aria-describedby="nombre" value="@datos[0].nombre" placeholder="Nombre del Sistema" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idSistema">Estado</label>
+            <div class="col-sm-5">
+                <select id="idEstado" name="idEstado" class="selectpicker form-control">
+                    @foreach (var row in lstEstados)
+                    {
+                        if (row.id == datos[0].idEstado)
+                        {
+                            <option value="@row.id" selected>@row.Nombre</option>
+                        }
+                        else
+                        {
+                            <option value="@row.id">@row.Nombre</option>
+                        }
+
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idSistema1">Unidad</label>
+            <div class="col-sm-5">
+                <select id="idUnidad" name="idUnidad" class="selectpicker form-control">
+                    @foreach (var row in lstUnidades)
+                    {
+                        if (row.id == datos[0].idUnidad)
+                        {
+                            <option value="@row.id" selected>@row.nombre</option>
+                        }
+                        else
+                        {
+                            <option value="@row.id">@row.nombre</option>
+                        }
+
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <a href="~/Mantenimientos/Sistemas/Sistemas.cshtml" class="btn btn-link" role="button">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>

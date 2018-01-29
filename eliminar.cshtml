@@ -1,0 +1,11 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    string id = Request.QueryString["id"];
+
+    wsServicio.Service1 obj = new wsServicio.Service1();
+    var datos = JsonConvert.DeserializeObject<List<dynamic>>(obj.EliminarRegistro(id));
+
+    Response.Redirect("/");
+
+}

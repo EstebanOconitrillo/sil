@@ -1,0 +1,11 @@
+D:\SysInformeLabores\LBAcceso\bin\Debug\LBAcceso.dll
+D:\SysInformeLabores\LBAcceso\bin\Debug\LBAcceso.pdb
+D:\SysInformeLabores\LBAcceso\bin\Debug\Newtonsoft.Json.dll
+D:\SysInformeLabores\LBAcceso\bin\Debug\Newtonsoft.Json.xml
+D:\SysInformeLabores\LBAcceso\obj\Debug\LBAcceso.dll
+D:\SysInformeLabores\LBAcceso\obj\Debug\LBAcceso.pdb
+C:\Users\oconitrillore\Documents\github\sil\LBAcceso\bin\Debug\LBAcceso.dll
+C:\Users\oconitrillore\Documents\github\sil\LBAcceso\bin\Debug\LBAcceso.pdb
+C:\Users\oconitrillore\Documents\github\sil\LBAcceso\obj\Debug\LBAcceso.csproj.CoreCompileInputs.cache
+C:\Users\oconitrillore\Documents\github\sil\LBAcceso\obj\Debug\LBAcceso.dll
+C:\Users\oconitrillore\Documents\github\sil\LBAcceso\obj\Debug\LBAcceso.pdb

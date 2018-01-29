@@ -1,0 +1,44 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Departamentos";
+    Layout = "~/_Layout.cshtml";
+
+    //var bd = Database.Open("conn");
+    //var estados = bd.Query(@"SELECT d.id, d.nombre, e.nombre as nomEstado FROM Departamentos d, Estados e where d.id = e.id  order by d.nombre");
+
+    wsServicio.Service1 obj = new wsServicio.Service1();
+    var datos = JsonConvert.DeserializeObject<List<dynamic>>(obj.getDepartamentos("0"));
+
+}
+<br />
+<div class="contenedor">
+    <br />
+    <h3>Departamentos del Sistema</h3>
+    <br />
+    <button type="button" id="btnNuevo" class="btn btn-primary">Nuevo</button>
+    <button type="button" id="btnEditar" class="btn btn-default" disabled>Editar</button>
+    <button type="button" id="btnEliminar" class="btn btn-default" disabled>Eliminar</button><br /><br />
+    <div class="table-responsive">
+        <table id="Departamentos" class="table" cellspacing="0" width="100">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in datos)
+                {
+                    <tr>
+                        <td>@row.id</td>
+                        <td>@row.nombre</td>
+                        <td>@row.Estado</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="~/Mantenimientos/Departamentos/FuncionesDepartamentos.js"></script>

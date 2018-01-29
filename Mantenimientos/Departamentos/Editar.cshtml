@@ -1,0 +1,97 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Editar Departamentos";
+    Layout = "~/_Layout.cshtml";
+
+    //var bd = Database.Open("conn");
+
+    //var lstEstados = bd.Query("SELECT [id], [nombre] FROM [sil].[dbo].[Estados]");
+
+    //int id = Request.QueryString["id"].AsInt();
+
+    //var datos = bd.QuerySingle(@"SELECT [id],[nombre], [idEstado]
+    //        FROM [dbo].[Departamentos] where id = @0", id);
+
+    string msgError = "";
+    wsServicio.Service1 obj = new wsServicio.Service1();
+
+    var lstEstados = JsonConvert.DeserializeObject<List<dynamic>>(obj.getEstados("0"));
+
+    var bd = Database.Open("conn");
+
+    string id = Request.QueryString["id"];
+
+    var datos = JsonConvert.DeserializeObject<List<dynamic>>(obj.getDepartamentos(id));
+
+    if (IsPost)
+    {
+        string nombre = Request.Form["nombre"];
+        string idEstado = Request.Form["idEstado"];
+        string idDepartamento = Request.Form["iddepartamento"];
+
+        //     var query = @"update [dbo].[Departamentos] set [nombre] = @0, idEstado = @1
+        //where id = @2";
+
+        //     var row = bd.QuerySingle(query, nombre, idEstado, id);
+
+        //     Response.Redirect("/Mantenimientos/Departamentos/Departamentos.cshtml");
+
+        var result = JsonConvert.DeserializeObject<List<dynamic>>(obj.EditarDepartamento(id, nombre, idEstado, idDepartamento));
+
+        if (result[0].ToString().Equals("Exito: Departamento modificado"))
+        {
+            msgError = "";
+            Response.Redirect("/Mantenimientos/Departamentos/Departamentos.cshtml");
+        }
+        else
+        {
+            msgError = "Error al modificar Departamento: " + result[0].ToString();
+        }
+    }
+}
+<div class="container">
+    <form method="post" style="margin-top: 30px;">
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <h3>Editar Departamento</h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Departamentos">Nombre</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="nombre" name="nombre" aria-describedby="nombre" value="@datos[0].nombre" placeholder="Nombre del Departamento" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idaccion">Estado</label>
+            <div class="col-sm-5">
+                <select id="idestado" name="idestado" class="selectpicker form-control">
+                    @foreach (var row in lstEstados)
+                    {
+                        if (datos[0].idEstado == row.id)
+                        {
+                            <option value="@row.id" selected>@row.Nombre</option>
+                        }
+                        else
+                        {
+                            <option value="@row.id">@row.Nombre</option>
+                        }
+
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <a href="~/Mantenimientos/Departamentos/Departamentos.cshtml" class="btn btn-link" role="button">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>

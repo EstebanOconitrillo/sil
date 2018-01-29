@@ -1,0 +1,169 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Agregar Registro";
+    Layout = "~/_Layout.cshtml";
+    string msgError = "";
+    wsServicio.Service1 obj = new wsServicio.Service1();
+  
+    var lstSistemas = JsonConvert.DeserializeObject<List<dynamic>>(obj.getSistemas("0"));
+    var lstAcciones = JsonConvert.DeserializeObject<List<dynamic>>(obj.getAcciones("0"));
+    var lstUnidades = JsonConvert.DeserializeObject<List<dynamic>>(obj.getUnidades("0"));
+
+    if (IsPost)
+    {
+        string fecha = Request.Form["fecha"];
+        string horaIni = Request.Form["horainicio"];
+        string horaFin = Request.Form["horafinal"];
+        string idsistema = Request.Form["idsistema"];
+        string idaccion = Request.Form["idaccion"];
+        string idunidad = Request.Form["idunidad"];
+        string Detalle = Request.Form["Detalle"];
+        string Observacion = Request.Form["Observacion"];
+        string porcentajeAvance = Request.Form["porcentajeAvance"];
+        
+        //falta completar, idEmpleado, idestado,idunidad, se mandan como "1" de momento
+        var result = JsonConvert.DeserializeObject<List<dynamic>>(obj.CrearLineaLabor("3",fecha,horaIni,horaFin,idsistema,idaccion,Detalle,Observacion,porcentajeAvance,"1","1"));
+
+        if (result[0].ToString().Equals("Exito: Registro creado"))
+        {
+            msgError = "";
+            Response.Redirect("/");    
+        }
+        else
+        {
+            msgError = "Error al crear registro: " + result[0].ToString();
+        }
+    }
+}
+<div class="container">
+    <form method="post" style="margin-top: 30px;">
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <h3>Nuevo Registro</h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" ></label>
+            <div class="col-sm-10">
+                <label class="col-sm-10 col-form-label" style="color:red">@msgError</label>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Fecha">Fecha</label>
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="fecha" name="fecha" aria-describedby="fecha" placeholder="Digite la Fecha" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="horainicio">Hora Inicio</label>
+            <div class="col-sm-3">
+                <input type="time" class="form-control" id="horainicio" name="horainicio" placeholder="Digite la hora de inicio" required onblur="validahora()">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="horafinal">Hora Final</label>
+            <div class="col-sm-3">
+                <input type="time" class="form-control" id="horafinal" name="horafinal" placeholder="Digite la hora final" required onblur="validahora()">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idsistema">Sistema</label>
+            <div class="col-sm-10">
+                <select id="idsistema" name="idsistema" class="selectpicker form-control">
+                    @foreach (var row in lstSistemas)
+                    {
+                        <option value="@row.id">@row.nombre</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idaccion">Acción</label>
+            <div class="col-sm-10">
+                <select id="idaccion" name="idaccion" class="selectpicker form-control">
+                    @foreach (var row in lstAcciones)
+                    {
+                        <option value="@row.id">@row.nombre</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idunidad">Unidad</label>
+            <div class="col-sm-10">
+                <select id="idunidad" name="idunidad" class="selectpicker form-control">
+                    @foreach (var row in lstUnidades)
+                    {
+                        <option value="@row.id">@row.nombre</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Detalle">Detalle</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="Detalle" name="Detalle" placeholder="Digite el detalle" required></textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Observacion">Observación</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="Observacion" name="Observacion" placeholder="Digite las observaciones"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="PorcentajeAvance">% Avance</label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" id="porcentajeAvance" name="porcentajeAvance" aria-describedby="fecha" min="1" max="100" maxlength="3" placeholder="Digite el porcentaje de avance" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <a href="/" class="btn btn-link" role="button">Cancelar</a>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script>
+    $('#fecha').val(moment().format('YYYY-MM-DD'))
+    $('#horainicio').val(moment().format('HH:mm'))
+    $('#horafinal').val(moment().format('HH:mm'))
+
+    $(function () {
+        $("#fecha").datepicker({ maxDate: new Date() });
+        $("#fecha").datepicker("option", "dateFormat", "dd/mm/yy");
+        $('#fecha').datepicker($.datepicker.regional["es"]);
+
+    });
+
+    function validahora() {
+        if ($('#horainicio').val() !== "" && $('#horafinal').val() !== "") {
+            var startTime = $('#horainicio').val();
+            var endTime = $('#horafinal').val();
+            if (startTime > endTime) {
+                $.alert('El campo Hora inicial no puede ser mayor a la Hora final.');
+                $('#horainicio').val("");
+                $('#horafinal').val("");
+                $('#horainicio').focus();
+            }
+        }
+    }
+
+</script>

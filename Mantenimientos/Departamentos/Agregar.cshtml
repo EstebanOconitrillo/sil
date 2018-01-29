@@ -1,0 +1,68 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Agregar Departamento";
+    Layout = "~/_Layout.cshtml";
+    string msgError = "";
+    wsServicio.Service1 obj = new wsServicio.Service1();
+
+    var lstEstados = JsonConvert.DeserializeObject<List<dynamic>>(obj.getEstados("0"));
+
+    if (IsPost)
+    {
+        string nombre = Request.Form["nombre"];
+        string idEstado = Request.Form["idestado"];
+        string idDepartamento = Request.Form["iddepartamento"];
+
+        var result = JsonConvert.DeserializeObject<List<dynamic>>(obj.CrearDepartamento(nombre, idEstado, idDepartamento));
+
+        //Response.Redirect("/Mantenimientos/Departamentos/Departamentos.cshtml");
+
+        if (result[0].ToString().Equals("Exito: Departamento creado"))
+        {
+            msgError = "";
+            Response.Redirect("/Mantenimientos/Departamentos/Departamentos.cshtml");
+        }
+        else
+        {
+            msgError = "Error al crear Departamento: " + result[0].ToString();
+        }
+    }
+}
+<div class="container">
+    <form method="post" style="margin-top: 30px;">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <h3>Nuevo Departamento</h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="nombre">Nombre</label>
+            <div class="col-sm-5">
+                <input type="text" class="form-control" id="nombre" name="nombre" aria-describedby="nombre" placeholder="Nombre del Departamento" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idaccion">Estado</label>
+            <div class="col-sm-5">
+                <select id="idestado" name="idestado" class="selectpicker form-control">
+                    @foreach (var row in lstEstados)
+                    {
+                        <option value="@row.id">@row.Nombre</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <a href="~/Mantenimientos/Departamentos/Departamentos.cshtml" class="btn btn-link" role="button">Cancelar</a>
+            </div>
+        </div>
+
+    </form>
+</div>

@@ -1,0 +1,198 @@
+﻿@using System.Collections.Generic;
+@using Newtonsoft.Json;
+@{
+    Page.Title = "Editar Registro";
+    Layout = "~/_Layout.cshtml";
+
+    string msgError = "";
+    wsServicio.Service1 obj = new wsServicio.Service1();
+
+    var lstSistemas = JsonConvert.DeserializeObject<List<dynamic>>(obj.getSistemas("0"));
+    var lstAcciones = JsonConvert.DeserializeObject<List<dynamic>>(obj.getAcciones("0"));
+    var lstUnidades = JsonConvert.DeserializeObject<List<dynamic>>(obj.getUnidades("0"));
+
+
+    var bd = Database.Open("conn");
+
+    string id = Request.QueryString["id"];
+
+    var datos = JsonConvert.DeserializeObject<List<dynamic>>(obj.getRegistros(id));
+
+    
+
+    if (IsPost)
+    {
+        string fecha = Request.Form["fecha"];
+        string horaIni = Request.Form["horainicio"];
+        string horaFin = Request.Form["horafinal"];
+        string idsistema = Request.Form["idsistema"];
+        string idaccion = Request.Form["idaccion"];
+        //string idunidad = Request.Form["idunidad"];
+        string Detalle = Request.Form["Detalle"];
+        string Observacion = Request.Form["Observacion"];
+        string porcentajeAvance = Request.Form["porcentajeAvance"];
+
+        var result = JsonConvert.DeserializeObject<List<dynamic>>(obj.EditarRegistro(id,fecha,horaIni,horaFin,idsistema,idaccion,Detalle,Observacion,porcentajeAvance));
+
+        if (result[0].ToString().Equals("Exito: Registro modificado"))
+        {
+            msgError = "";
+            Response.Redirect("/");
+        }
+        else
+        {
+            msgError = "Error al modificar registro: " + result[0].ToString();
+        }
+    }
+
+}
+<div class="container">
+    <form method="post" style="margin-top: 30px;">
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <h3>Editar Registro</h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <label class="col-sm-10 col-form-label" style="color:red">@msgError</label>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Fecha">Fecha</label>
+            <div class="col-sm-3">
+                @*<input type="text" class="form-control" id="fecha" name="fecha" aria-describedby="fecha" value="@datos[0].Fecha" placeholder="Digite la Fecha" required>*@
+                <input type="text" class="form-control" id="fecha" name="fecha" value="@datos[0].Fecha" >
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="horainicio">Hora Inicio</label>
+            <div class="col-sm-3">
+                <input type="time" class="form-control" id="horainicio" name="horainicio" value="@datos[0].horaInicio" placeholder="Digite la hora de inicio" required onblur="validahora()">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="horafinal">Hora Final</label>
+            <div class="col-sm-3">
+                <input type="time" class="form-control" id="horafinal" name="horafinal" value="@datos[0].horaFinal" placeholder="Digite la hora final" required onblur="validahora()">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idsistema">Sistema</label>
+            <div class="col-sm-10">
+                <select id="idsistema" name="idsistema" class="selectpicker form-control">
+                    @foreach (var row in lstSistemas)
+                    {
+                        if (datos[0].idSistema == row.id)
+                        {
+                            <option value="@row.id" selected>@row.nombre</option>
+                        }
+                        else
+                        {
+                            <option value="@row.id">@row.nombre</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idaccion">Acción</label>
+            <div class="col-sm-10">
+                <select id="idaccion" name="idaccion" class="selectpicker form-control">
+                    @foreach (var row in lstAcciones)
+                    {
+                        if (datos[0].idAccion == row.id)
+                        {
+                            <option value="@row.id" selected>@row.nombre</option>
+                        }
+                        else
+                        {
+                            <option value="@row.id">@row.nombre</option>
+                        }
+
+                    }
+                </select>
+            </div>
+        </div>
+
+        @*<div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="idunidad">Unidad</label>
+            <div class="col-sm-10">
+                <select id="idunidad" name="idunidad" class="selectpicker form-control">
+                    @foreach (var row in lstUnidades)
+                    {
+                        if (datos[0].Unidad == row.id)
+                        {
+                            <option value="@row.id" selected>@row.nombre</option>
+                        }
+                        else
+                        {
+                            <option value="@row.id">@row.nombre</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>*@
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Detalle">Detalle</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="Detalle" name="Detalle" placeholder="Digite el detalle" required>@datos[0].detalle</textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="Observacion">Observación</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="Observacion" name="Observacion" placeholder="Digite las observaciones">@datos[0].observacion</textarea>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="PorcentajeAvance">% Avance</label>
+            <div class="col-sm-3">
+                <input type="number" class="form-control" id="porcentajeAvance" name="porcentajeAvance" value="@datos[0].avance" aria-describedby="fecha" min="1" max="100" maxlength="3" placeholder="Digite el porcentaje de avance" required>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Aceptar</button>
+                <a href="/" class="btn btn-link" role="button">Cancelar</a>
+            </div>
+        </div>
+
+    </form>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $(function () {
+            var fe = $("#fecha").val();
+            $("#fecha").datepicker({ maxDate: new Date() });
+            $("#fecha").datepicker("option", "dateFormat", "dd/mm/yy");
+            $('#fecha').datepicker($.datepicker.regional["es"]);
+            $("#fecha").val(fe);
+        });
+
+        function validahora() {
+            if ($('#horainicio').val() !== "" && $('#horafinal').val() !== "") {
+                var startTime = $('#horainicio').val();
+                var endTime = $('#horafinal').val();
+                if (startTime > endTime) {
+                    $.alert('El campo Hora inicial no puede ser mayor a la Hora final.');
+                    $('#horainicio').val("");
+                    $('#horainicio').focus();
+                }
+            }
+        }
+    });
+</script>
