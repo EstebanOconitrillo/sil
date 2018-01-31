@@ -1,4 +1,5 @@
 ﻿@{
+    Seguridad.RequerirAuth();
     Page.Title = "SISTEMA DE INFORME DE LABORES (SIL)";
 
 }
@@ -62,53 +63,83 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand" href="/">
-            @*<img src="https://dl.dropboxusercontent.com/s/n5dhy9h1osuf5v9/mh-b.png" alt="Ministerio de Hacienda" style="width:120px">*@
-            <img src="~/Images/mh-b.png" alt="Ministerio de Hacienda" style="width:120px">
-        </a>
+    @if (Seguridad.Usuario.Membresia.Esquema != null)
+    {
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="/">
+                @*<img src="https://dl.dropboxusercontent.com/s/n5dhy9h1osuf5v9/mh-b.png" alt="Ministerio de Hacienda" style="width:120px">*@
+                <img src="~/Images/mh-b.png" alt="Ministerio de Hacienda" style="width:120px">
+            </a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    @*<a class="nav-link" href="~/Default.cshtml">Inicio <span class="sr-only">(current)</span></a>*@
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Justificar Tardías</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Mantenimientos
-                    </a>
-                    <div class="dropdown-menu active" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="~/Mantenimientos/Acciones/Acciones.cshtml">Acciones</a>
-                        <a class="dropdown-item" href="~/Mantenimientos/Departamentos/Departamentos.cshtml">Departamentos</a>
-                        <a class="dropdown-item" href="~/Mantenimientos/Empleados/Empleados.cshtml">Empleados</a>
-                        <a class="dropdown-item" href="~/Mantenimientos/Estados/Estados.cshtml">Estados</a>
-                        @*<a class="dropdown-item" href="#">Roles</a>*@
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="~/Mantenimientos/Sistemas/Sistemas.cshtml">Sistemas</a>
-                        <a class="dropdown-item" href="#">Sistemas x Unidad</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="~/Mantenimientos/Unidades/Unidades.cshtml">Unidades</a>
-                        <a class="dropdown-item" href="#">Unidades x Departamento</a>
-                    </div>
-                </li>
-                
-            </ul>
-                <a class="colores" href="#">LogOut</a>
-        </div>
-    </nav>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    @foreach (Esquema e in Seguridad.Usuario.Membresia.Esquema.Items)
+                    {
+                        if (e.Items.Count == 0)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">@e.DisplayName</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    @e.DisplayName
+                                </a>
+                                <div class="dropdown-menu active" aria-labelledby="navbarDropdown">
+                                    @foreach (Esquema ee in e.Items)
+                                    {
+                                        <a class="dropdown-item" href="@ee.Url">@ee.DisplayName</a>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
+                <a class="colores" href="~/Account/Logout.cshtml">LogOut</a>
+            </div>
 
+            @*<div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="~/Default.cshtml">Inicio <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Justificar Tardías</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Mantenimientos
+                            </a>
+                            <div class="dropdown-menu active" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="~/Mantenimientos/Acciones/Acciones.cshtml">Acciones</a>
+                                <a class="dropdown-item" href="~/Mantenimientos/Departamentos/Departamentos.cshtml">Departamentos</a>
+                                <a class="dropdown-item" href="~/Mantenimientos/Empleados/Empleados.cshtml">Empleados</a>
+                                <a class="dropdown-item" href="~/Mantenimientos/Estados/Estados.cshtml">Estados</a>
+                                <a class="dropdown-item" href="#">Roles</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="~/Mantenimientos/Sistemas/Sistemas.cshtml">Sistemas</a>
+                                <a class="dropdown-item" href="#">Sistemas x Unidad</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="~/Mantenimientos/Unidades/Unidades.cshtml">Unidades</a>
+                                <a class="dropdown-item" href="#">Unidades x Departamento</a>
+                            </div>
+                        </li>
 
+                    </ul>
+                    <a class="colores" href="~/Account/Logout.cshtml">LogOut</a>
+                </div>*@
 
+        </nav>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+    }
     <div class="col-sm-12">
         @RenderBody()
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
 </body>

@@ -1,17 +1,45 @@
-﻿@{
-    WebSecurity.RequireAuthenticatedUser();
+﻿@*@{
+        WebSecurity.RequireAuthenticatedUser();
 
-    if (IsPost) {
-        // Verify the request was submitted by the user
-        AntiForgery.Validate();
+        if (IsPost) {
+            // Verify the request was submitted by the user
+            AntiForgery.Validate();
 
-        // Log out of the current user context
-        WebSecurity.Logout();
+            // Log out of the current user context
+            WebSecurity.Logout();
 
-        // Redirect back to the return URL or homepage
-        var returnUrl = Request.QueryString["ReturnUrl"];
-        Context.RedirectLocal(returnUrl);
-    } else {
-        Response.Redirect("~/");
+            // Redirect back to the return URL or homepage
+            var returnUrl = Request.QueryString["ReturnUrl"];
+            Context.RedirectLocal(returnUrl);
+        } else {
+            Response.Redirect("~/");
+        }
+    }*@
+
+@{
+
+    string[] item = AppState.AllKeys.ToArray<string>();
+
+    for (int i = 0; i <= item.Length - 1; i++)
+    {
+        if ((string)AppState.Get(item[i]) == Session["Usuario"])
+        {
+            AppState.Remove(item[i]);
+        }
+        i = i + 1;
+
     }
+
+    //Session["Titulo"] = "";
+    Session["Usuario"] = "";
+    Session["Nombre"] = "";
+    Session["Correo"] = "";
+    //Session["Nivel"] = "";
+    //Session["expira"] = "";
+    //Session["password"] = "";
+    Session.Clear();
+    FormsAuthentication.SignOut();
+    Response.Redirect("../Default.cshtml");
+
+    //Response.Redirect("Login.cshtml");
 }
